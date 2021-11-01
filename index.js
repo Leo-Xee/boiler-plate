@@ -6,6 +6,7 @@ const port = 5000;
 
 const config = require('./config/key');
 const { User } = require('./models/User');
+const { auth } = require('./middleware/auth');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -23,7 +24,7 @@ app.get('/', (req, res) => {
   res.send('Hello World, 안녕하세요!');
 });
 
-app.post('/register', (req, res) => {
+app.post('api/users/register', (req, res) => {
   const user = new User(req.body);
 
   user.save((err) => {
@@ -34,7 +35,7 @@ app.post('/register', (req, res) => {
   });
 });
 
-app.post('/login', (req, res) => {
+app.post('api/users/login', (req, res) => {
   // 요청된 이메일을 DB에서 찾기
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
@@ -63,6 +64,19 @@ app.post('/login', (req, res) => {
           .json({ loginSuccess: true, userId: user._id });
       });
     });
+  });
+});
+
+app.post('/api/users/auth', auth, (req, res) => {
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image,
   });
 });
 
