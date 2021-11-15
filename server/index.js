@@ -28,7 +28,7 @@ app.get('/api/hello', (req, res) => {
   res.send('hello, new world');
 });
 
-app.post('api/users/register', (req, res) => {
+app.post('/api/users/register', (req, res) => {
   const user = new User(req.body);
 
   user.save((err) => {
@@ -39,7 +39,7 @@ app.post('api/users/register', (req, res) => {
   });
 });
 
-app.post('api/users/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
   // 요청된 이메일을 DB에서 찾기
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
@@ -85,7 +85,7 @@ app.post('/api/users/auth', auth, (req, res) => {
 });
 
 app.get('/api/users/logout', auth, (req, res) => {
-  User.findOneAndUpdate({ _id: req.user.id }, { token: '' }, (err, user) => {
+  User.findOneAndUpdate({ _id: req.user.id }, { token: '' }, (err) => {
     if (err) return res.json({ success: false, err });
     return res.status(200).send({
       success: true,
